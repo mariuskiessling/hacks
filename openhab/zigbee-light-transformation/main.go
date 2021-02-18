@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -18,16 +19,14 @@ type Event struct {
 }
 
 func main() {
-	apiBaseURL, ok := os.LookupEnv("OPENHAB_API_BASE_URL")
-	if !ok {
-		help("Missing environment variable. Set 'OPENHAB_API_BASE_URL' to the base path of the OpenHab API (e.g. https://openhab/rest).", 1)
-	}
+	apiBaseURL := flag.String("url", "http://127.0.0.1:8080/rest", "The base URL of the OpenHab API.")
+	flag.Parse()
 
 	c := &openhab.Client{
 		HTTPClient: http.Client{
 			Timeout: 5 * time.Second,
 		},
-		APIBaseURL: apiBaseURL,
+		APIBaseURL: *apiBaseURL,
 	}
 	if len(os.Args) < 2 {
 		help("Missing subcommand", 1)
