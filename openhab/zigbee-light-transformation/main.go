@@ -40,10 +40,10 @@ func main() {
 
 		switch os.Args[2] {
 		case "in":
-			if len(os.Args) != 4 {
+			if len(os.Args) < 4 {
 				help(`Missing argument. Possible value is a JSON payload of this structure: { "state": "ON/OFF", "brightness": 0-255 }`, 1)
 			}
-			PowerIn(os.Args[3])
+			PowerIn(strings.Join(os.Args[3:], " "))
 
 		case "out":
 			if len(os.Args) != 4 {
@@ -61,10 +61,10 @@ func main() {
 		}
 		switch os.Args[2] {
 		case "in":
-			if len(os.Args) != 4 {
+			if len(os.Args) < 4 {
 				help(`Missing argument. Possible value is a JSON payload of this structure: { "state": "ON/OFF", "brightness": 0-255 }`, 1)
 			}
-			BrightnessIn(os.Args[3])
+			BrightnessIn(strings.Join(os.Args[3:], " "))
 
 		case "out":
 			if len(os.Args) != 4 {
@@ -90,6 +90,12 @@ func PowerOut(cmd string, openHabClient *openhab.Client) {
 	i, err := openHabClient.GetItem("Innr_RF264_1_Brightness")
 	if err != nil {
 		panic(err)
+	}
+
+	// Overwrite any NULL (unknown by OpenHAB) item state with 0 (off) to satisfy
+	// the int casting.
+	if i.State == "NULL" {
+		i.State = "0"
 	}
 
 	rel, err := strconv.Atoi(i.State)
