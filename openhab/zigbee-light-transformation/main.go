@@ -28,17 +28,17 @@ func main() {
 		},
 		APIBaseURL: *apiBaseURL,
 	}
-	if len(os.Args) < 2 {
+	if len(flag.Args()) < 1 {
 		help("Missing subcommand", 1)
 	}
 
-	switch os.Args[1] {
+	switch flag.Args()[0] {
 	case "power":
-		if len(os.Args) < 3 {
+		if len(flag.Args()) < 2 {
 			help("Missing argument. Possible value 'out' for JSON output or 'in' for JSON ingestion.", 1)
 		}
 
-		switch os.Args[2] {
+		switch flag.Args()[1] {
 		case "in":
 			if len(os.Args) < 4 {
 				help(`Missing argument. Possible value is a JSON payload of this structure: { "state": "ON/OFF", "brightness": 0-255 }`, 1)
@@ -46,10 +46,10 @@ func main() {
 			PowerIn(strings.Join(os.Args[3:], " "))
 
 		case "out":
-			if len(os.Args) != 4 {
+			if len(flag.Args()) != 3 {
 				help("Missing argument. Possible values ON/1 or OFF/0.", 1)
 			}
-			PowerOut(os.Args[3], c)
+			PowerOut(flag.Args()[2], c)
 
 		default:
 			help("Invalid argument. Possible value 'out' for JSON output or 'in' for JSON ingestion.", 1)
@@ -57,9 +57,10 @@ func main() {
 
 	case "brightness":
 		if len(os.Args) < 3 {
+		if len(flag.Args()) < 2 {
 			help("Missing argument. Possible value 'out' for JSON output or 'in' for JSON ingestion.", 1)
 		}
-		switch os.Args[2] {
+		switch flag.Args()[1] {
 		case "in":
 			if len(os.Args) < 4 {
 				help(`Missing argument. Possible value is a JSON payload of this structure: { "state": "ON/OFF", "brightness": 0-255 }`, 1)
@@ -67,10 +68,10 @@ func main() {
 			BrightnessIn(strings.Join(os.Args[3:], " "))
 
 		case "out":
-			if len(os.Args) != 4 {
+			if len(flag.Args()) != 3 {
 				help("Missing argument. Possible values are any integer between 1-255.", 1)
 			}
-			level, err := strconv.Atoi(os.Args[3])
+			level, err := strconv.Atoi(flag.Args()[2])
 			if err != nil {
 				fmt.Println(err)
 				help("Invalid argument. Brightness level not a valid number.", 1)
@@ -82,7 +83,7 @@ func main() {
 		}
 
 	default:
-		help(fmt.Sprintf("Unknown command '%v'", os.Args[1]), 1)
+		help(fmt.Sprintf("Unknown command '%v'", flag.Args()[0]), 1)
 	}
 }
 
