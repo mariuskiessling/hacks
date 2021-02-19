@@ -40,10 +40,10 @@ func main() {
 
 		switch flag.Args()[1] {
 		case "in":
-			if len(os.Args) < 4 {
+			if len(flag.Args()) < 3 {
 				help(`Missing argument. Possible value is a JSON payload of this structure: { "state": "ON/OFF", "brightness": 0-255 }`, 1)
 			}
-			PowerIn(strings.Join(os.Args[3:], " "))
+			PowerIn(strings.Join(flag.Args()[2:], " "))
 
 		case "out":
 			if len(flag.Args()) != 3 {
@@ -56,16 +56,15 @@ func main() {
 		}
 
 	case "brightness":
-		if len(os.Args) < 3 {
 		if len(flag.Args()) < 2 {
 			help("Missing argument. Possible value 'out' for JSON output or 'in' for JSON ingestion.", 1)
 		}
 		switch flag.Args()[1] {
 		case "in":
-			if len(os.Args) < 4 {
+			if len(flag.Args()) < 3 {
 				help(`Missing argument. Possible value is a JSON payload of this structure: { "state": "ON/OFF", "brightness": 0-255 }`, 1)
 			}
-			BrightnessIn(strings.Join(os.Args[3:], " "))
+			BrightnessIn(strings.Join(flag.Args()[2:], " "))
 
 		case "out":
 			if len(flag.Args()) != 3 {
